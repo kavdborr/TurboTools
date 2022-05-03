@@ -12,9 +12,3 @@ TurboTools
 Pachage for reading, displaying and converting turbomachinery maps
 
 * Free software: 3-clause BSD license
-* Documentation: (COMING SOON!) https://kavdborr.github.io/turbotools.
-
-Features
---------
-
-* TODO
