@@ -16,7 +16,26 @@ import os
 class TurboMap:
     """
     This class contains tools to load, convert and display compressor maps.
+    
+    Parameters
+    ----------
+    fileLoc:str
+        Location of teh map that needs to be read
+        
+    width:int
+        width of the map
+        
+    height:int
+        height of the map
+        
+    isCompressor:Bool
+        is the map a compressor?
+        
+    name:string
+        opt: provides a custom name for the map. Otherwise the filename is used.
+    
     """
+    
     name = "" # name of the map for plotting and savinf purposes
     
     isTurbine = False   # is this the map of a turbine?
@@ -33,15 +52,18 @@ class TurboMap:
     beta = np.ones([10,1])  # list of beta describing the map
     N = np.ones([10,1]) # list of non dimensional rotational speeds
     
-    width = 10  # width of the map (number of)
+    width = 10  # width of the map (number of columns in ine field)
     height = 10 # height of the map (number of rows in one field)
     
     surgeM = np.array([0,1])
     surgeP = np.array([0,1])
     
     def __init__(self, fileLoc, width, height, isCompressor, name="default"):
-        "initialiser for the object. Populates all fields needed to display a (non-scaled) map"
-        "the width and height are user provided as the file structure is not always consistent"
+        """
+        initialiser for the object. Populates all fields needed to display a (non-scaled) map
+        the width and height are user provided as the file structure is not always consistent
+        
+        """
         
         # has a custom name been specified? if so use it!
         if not(name == "default"):
@@ -66,14 +88,40 @@ class TurboMap:
            
 
     def scaleMap(self, Kp, Km, Keta):
-        "function to easily scale the whole map in one line"
+        """function to easily scale the whole map in one line
+        
+        Parameters
+        ----------
+        Kp:float
+            scaling factor for the pressure ratio
+            
+        Km:float
+            scaling factor for the massflowrate
+            
+        Keta:float
+            scaling factor for the adiabatic efficiency
+        """
         self.Kp=Kp
         self.Km=Km
         self.Keta=Keta
 
     
     def readMapGT(self, fileLoc, width, height):
-        "read the map in the Gasturb format"
+        """
+        Reads the map in the Gasturb format. The Gasturb format can vary slighlty in setup, therefore it is easier to make the user specify the size of the map.
+        
+        Parameters
+        ----------
+        fileLoc:str
+            Location of teh map that needs to be read
+            
+        width:int
+            width of the map
+            
+        height:int
+            height of the map
+            
+        """
         mPR = np.zeros([0,1])   # minimum pressure ratio for turbine construction
         MPR = np.zeros([0,1])   # maximum pressure ratio for turbine construction
         fid = open(fileLoc)
@@ -110,7 +158,18 @@ class TurboMap:
     
     
     def writeMap(self, fileLoc):
-        "write the map in the TURBO format. This makes use of xml."
+        """
+        Write the map in the TURBO format, using the xml format.
+        For the goal of the current project only gasturb to TURBO conversion is needed.
+        In future versions support for the inverse may also become available.
+        
+        Parameters
+        ----------
+        fileLoc:str
+            fileName for the map, which is saved in convertedMaps.
+            
+        """
+        
         # construct header
         doc = minidom.Document()
         l1 = doc.createElement("table")
@@ -179,7 +238,14 @@ class TurboMap:
     
     
     def printMap(self):
-        "display the scaled map"
+        """
+        Display the scaled map. formatting is autamically performed.
+        After calling this function more plotting actions can be performed on the same figure.
+        
+        Parameters
+        ----------
+        None
+        """
         #always start a new figure when plotting a map
         plt.figure()
 
@@ -208,7 +274,19 @@ class TurboMap:
     
     
     def plotDesingPoint(self, beta, N):
-        "This funcion adds the desing point to the map"
+        """
+        Plots the design point (in terms of N and beta) on the map.
+        
+        Parameters
+        ----------
+        beta:float
+            Design beta value of the machine.
+        
+        N:float
+            Design corrected rotaional speed of the machine.
+            
+        """
+        
         # covert design point from beta and N to massflow and compression ratio
         mf = interp2d(self.N, self.beta, self.massFlow.T)
         pr = interp2d(self.N, self.beta, self.compression.T)
@@ -220,9 +298,27 @@ class TurboMap:
     
     
     def plotExperiment(self, test, machine, Color="rainbow", res=50):
-        "This function plots the movement of the operating point on the map"
-        "The color of the line can vary with time id specified color is rainbow"
-        "res is the number of distinct colors"
+        """
+        This function plots the movement of the operating point on the map.
+        The color of the line can vary with time if specified color is rainbow.
+        
+        Parameters
+        ----------
+        test:DataFrame
+            Pandas dataframe containing the results of a simulation performed in EcosimPro.
+        
+        machine:str
+            name of the machine, as reported in the EcosimPro report file.
+            
+        Color:str
+            Color of the operating point locus. 
+            If not specified, use rainbow, where the line varies 
+            from red ot green in finction of time.
+            
+        res:int
+            Color resolution of the line in rainbow mode. Default is 50. 
+            Choosing unreasonably large values might resutl in slow plotting
+        """
         # the first two are boring monochrome plots
         if Color!="rainbow" and self.isCompressor:
             plt.plot(test[machine+".Wcorr(Kg/s)"], test[machine+".pi(-)"], color=Color)
@@ -252,9 +348,34 @@ class TurboMap:
     
     
     def __readSection(self, width, height, fid):
-        "function to read a block of the Gasturb text file"
-        "helper functiuon of readMapGT"
-        "function is private as it is only needed within the class"
+        """
+        Function to read a block of the Gasturb text file.
+        Helper function of readMapGT only, as such it can be left private
+        
+        Parameters
+        ----------
+        width:int
+            width of the map
+            
+        height:int
+            height of the map
+            
+        fid:file
+            file handler of the Gasturb map file, to be read line by line
+            
+        Returns
+        -------
+        beta:array
+            1D array of beta values describing the map.
+        
+        N:array
+            1D array of corrected rotational speed values describing the map.
+        
+        section:2D array
+            2D array of the field which has been read (pressure, massflow or efficiency)
+        
+        """
+        
         totalLines = math.ceil((width+1)/5)*(height+1)
         section = np.zeros([0])
         for i in range(totalLines):
@@ -283,9 +404,27 @@ class TurboMap:
     
     
     def __readTurbineSection(self, fid, width, height):
-        "reads minimum and maximum pressure ratio for turbine maps"
-        "helper function of readMapGT"
-        "function is private as it is only needed within the class"
+        """
+        Reads minimum and maximum pressure ratio for turbine maps. 
+        Helper function of readMapGT. Private as it is only needed within the class.
+        
+        Parameters
+        ----------
+        width:int
+            width of the map
+            
+        height:int
+            height of the map
+            
+        fid:file
+            file handler of the Gasturb map file, to be read line by line
+        
+        
+        Returns
+        -------
+        section:2D array
+            return the section of the gasturb map, saved as 2D array
+        """
         # the methods are in general completely analogous to the readsection class, except with different bounds
         totalLines = math.ceil((height+1)/5)*2
         section = np.zeros([0])

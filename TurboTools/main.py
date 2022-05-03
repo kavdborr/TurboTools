@@ -43,11 +43,3 @@ HPT.plotDesingPoint(0.5, 1)
 HPT.plotExperiment(testResults, "HPT", "rainbow")
 plt.savefig("figures/HPT", dpi=300)
 
-# Plot the net thrust in time
-plt.figure()
-plt.plot(testResults["TIME"], testResults["netThrust"]/1000)
-plt.title("Net Thrust Output")
-plt.xlabel("Time [s]")
-plt.ylabel("Thrust [kN]")
-plt.grid(True)
-plt.savefig("figures/netThrust", dpi=300)
