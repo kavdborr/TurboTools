@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<table type="3D" name="Characteristic map HPT" description="DESCRIPTION" version="1.0" cdate="03/05/2022" mdate="03/05/2022" revision="1.0">
+<table type="3D" name="Characteristic map HPT" description="DESCRIPTION" version="1.0" cdate="05/05/2022" mdate="05/05/2022" revision="1.0">
 	<interp default="LINEAR" valid="{FORBIDDEN, LINEAR}"/>
 	<extrap default="LINEAR" valid="{FORBIDDEN, LINEAR, SPLINE}"/>
 	<axis1 id="Field indicator (-)" value="{ 1,2,3 }"/>

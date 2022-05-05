@@ -71,6 +71,7 @@ class TurboMap:
         else:
             # Take the name of the file without extension as default name
             self.name = fileLoc.split(".")[-2].split("/")[-1]
+        print(os.linesep + "Loading map: " + self.name)
         
         # set width and height
         self.width=width
@@ -85,7 +86,8 @@ class TurboMap:
         # read the map file in the gasturb format if the extention is right
         if ".Map" in fileLoc:
             self.readMapGT(fileLoc, width, height)
-           
+        print("Loading complete!")
+   
 
     def scaleMap(self, Kp, Km, Keta):
         """function to easily scale the whole map in one line
@@ -169,7 +171,7 @@ class TurboMap:
             fileName for the map, which is saved in convertedMaps.
             
         """
-        
+        print("Converting map: " + self.name)
         # construct header
         doc = minidom.Document()
         l1 = doc.createElement("table")
@@ -235,7 +237,8 @@ class TurboMap:
         xml_str = doc.toprettyxml(indent="\t")
         with open("convertedMaps/" + fileLoc, "w") as f:
             f.write(xml_str)
-    
+        print("Converted map saved as: " +  "convertedMaps/" + fileLoc)
+
     
     def printMap(self):
         """
@@ -245,9 +248,13 @@ class TurboMap:
         Parameters
         ----------
         None
+        
+        Returns
+        -------
+        figure object
         """
         #always start a new figure when plotting a map
-        plt.figure()
+        fig=plt.figure()
 
         #for compressors, plot the efficiency in terms of massflow and pressure ratio
         if self.isCompressor:
@@ -271,7 +278,7 @@ class TurboMap:
         else:
             plt.xlabel(r"$\tilde{\dot{m}} \cdot{} \tilde{N}$ [kg/s]")
         plt.colorbar(label=r"efficiency [-]")
-    
+        return fig
     
     def plotDesingPoint(self, beta, N):
         """
@@ -319,6 +326,7 @@ class TurboMap:
             Color resolution of the line in rainbow mode. Default is 50. 
             Choosing unreasonably large values might resutl in slow plotting
         """
+        print("Started plotting experiment on " +self.name+ ", can take a minute...")
         # the first two are boring monochrome plots
         if Color!="rainbow" and self.isCompressor:
             plt.plot(test[machine+".Wcorr(Kg/s)"], test[machine+".pi(-)"], color=Color)
@@ -344,7 +352,6 @@ class TurboMap:
                 Color = [1-p, p, 0.0]
                 # plot a line segment
                 plt.plot(wcorr[int((i/res)*L):int((i+1)/res*L)], pi[int((i)/res*L):int((i+1)/res*L)], color=Color)
-        
     
     
     def __readSection(self, width, height, fid):

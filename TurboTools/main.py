@@ -43,3 +43,5 @@ HPT.plotDesingPoint(0.5, 1)
 HPT.plotExperiment(testResults, "HPT", "rainbow")
 plt.savefig("figures/HPT", dpi=300)
 
+# show plots, also when running from cmd
+plt.show()
