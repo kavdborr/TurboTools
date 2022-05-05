@@ -14,5 +14,3 @@ Pachage for reading, displaying and converting turbomachinery maps
 * Free software: 3-clause BSD license
 
 * Documentation which actually works(!): https://kavdborr.github.io/
-
-* Or even putting my old domain to use (as soon as the DNS settings stick, not accessible from VKI): http://www.vdborre.be
