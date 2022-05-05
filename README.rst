@@ -15,4 +15,4 @@ Pachage for reading, displaying and converting turbomachinery maps
 
 * Documentation which actually works(!): https://kavdborr.github.io/
 
-* Or even putting my old domain to use: vdborre.be
+* Or even putting my old domain to use (as soon as the DNS settings stick): https://www.vdborre.be
